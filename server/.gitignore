@@ -1,0 +1,25 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/src/generated/prisma
+# Prisma
+prisma/*.db
+prisma/*.sqlite
+prisma/*.shadow.db
+# Se você gerar client em pasta separada
+prisma/generated/
+
+# Postgres (quando usa volume local)
+pgdata/
+postgres-data/
+*.sql
+*.dump
+
+# Node / geral
+node_modules/
+.pnpm/
+dist/
+build/
+.env*
+!.env.example

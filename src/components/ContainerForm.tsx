@@ -1,11 +1,11 @@
-import useLocalStorage from "@/assets/hooks/useLocalStorage";
 import type { CampoFormulario, FormData } from "@/assets/interfaces/interfaces";
 import { useState } from "react";
 import InputForm from "./InputForm";
 import ButtonSubmit from "./ButtonSubmit";
+import useObras from "@/assets/hooks/useObras";
 
 export default function ContainerForm() {
-  const { value: obras, addItem } = useLocalStorage<FormData>("obras", []);
+  const { addObra } = useObras();
   const [formData, setFormData] = useState<FormData>({
     id: 0,
     objeto: "",
@@ -19,27 +19,39 @@ export default function ContainerForm() {
     dataInicio: "",
     dataFinal: "",
   });
-  const handleSubmit = (e: React.FormEvent) => {
+  const inicial: FormData = {
+    id: 0,
+    objeto: "",
+    tomador: "",
+    modalidade: "",
+    apelido: "",
+    valor: 0,
+    situacao: "Ativo",
+    ordemServico: "",
+    contrato: "",
+    dataInicio: "",
+    dataFinal: "",
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Atualiza o estado e salva no localStorage pelo hook
-    addItem(formData);
+    const { id, ...rest } = formData;
 
-    // Limpa o formulário
-    setFormData({
-      id: 0,
-      objeto: "",
-      tomador: "",
-      modalidade: "",
-      apelido: "",
-      valor: 0,
-      situacao: "Ativo",
-      ordemServico: "",
-      contrato: "",
-      dataInicio: "",
-      dataFinal: "",
-    });
-    console.log(obras);
+    const payload: Omit<FormData, "id"> = {
+      ...rest,
+      valor: Number(formData.valor),
+      dataInicio: formData.dataInicio || "", // string vazia se não preenchido
+      dataFinal: formData.dataFinal || "",
+    };
+
+    try {
+      await addObra(payload);
+      setFormData(inicial); // limpa o formulário
+      console.log("Obra adicionada com sucesso.");
+    } catch (err) {
+      alert("Erro ao adicionar obra.");
+      console.error(err);
+    }
   };
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -81,8 +93,8 @@ export default function ContainerForm() {
           value: "Empreitada por preço global",
         },
         {
-          label: "Empreitada por preço global",
-          value: "Empreitada por preço global",
+          label: "Empreitada por preço Unitário",
+          value: "Empreitada por preço Unitário",
         },
       ],
     },

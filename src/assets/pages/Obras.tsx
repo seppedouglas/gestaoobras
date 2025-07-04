@@ -7,19 +7,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { FormData } from "../interfaces/interfaces";
-
-import useLocalStorage from "../hooks/useLocalStorage";
 import { FilePenLine, X } from "lucide-react";
 import { useState } from "react";
 import ContainerEdit from "@/components/ContainerEdit";
+import useObras from "../hooks/useObras";
 
 export default function Obras() {
   const [editingObra, setEditingObra] = useState<FormData | null>(null);
-  const {
-    value: obras,
-    removeItemById,
-    updateItemById,
-  } = useLocalStorage<FormData>("obras", []);
+  const { obras, removeObra, updateObra, loading, error } = useObras();
+
+  if (loading) return <p className="p-6">Carregando…</p>;
+  if (error) return <p className="p-6 text-red-600">{error}</p>;
+
   return (
     <div className="relative ">
       {editingObra && (
@@ -32,7 +31,7 @@ export default function Obras() {
             <ContainerEdit
               obra={editingObra}
               onClose={() => setEditingObra(null)}
-              onSave={updateItemById}
+              onSave={updateObra}
             />
           </div>
         </div>
@@ -76,7 +75,7 @@ export default function Obras() {
                   <TableCell className="inline-block">
                     <span className="inline-block transition-transform duration-200 transform hover:scale-125 pr-2">
                       <X
-                        onClick={() => removeItemById(obra.id)}
+                        onClick={() => removeObra(obra.id)}
                         className="text-red-600 w-4"
                       />
                     </span>

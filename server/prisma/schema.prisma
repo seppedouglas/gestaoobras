@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/**
+ * Tabela Obra (ou “contrato/ordem de serviço”)
+ * ─────────────────────────────────────────────
+ * • id              → chave primária
+ * • objeto          → descrição do objeto contratado
+ * • tomador         → órgão ou contratante
+ * • modalidade      → ex.: Concorrência, Tomada de Preços…
+ * • apelido         → nome curto usado internamente
+ * • valor           → valor global do contrato
+ * • situacao        → status atual (Em execução, Concluída, Suspensa…)
+ * • ordemServico    → número ou código interno
+ * • contrato        → número do contrato / aditivo
+ * • dataInicio      → data de início
+ * • dataFinal       → data prevista ou real de término (pode ser nula)
+ * • createdAt       → timestamp automático de criação
+ * • updatedAt       → timestamp automático de atualização
+ */
+model Obra {
+  id            Int      @id @default(autoincrement())
+  objeto        String
+  tomador       String
+  modalidade    String
+  apelido       String
+  valor         Decimal   @db.Decimal(18,2)
+  situacao      String
+  ordemServico  String
+  contrato      String
+  dataInicio    DateTime
+  dataFinal     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
